@@ -142,6 +142,10 @@ if command -v lsd &> /dev/null; then
 
   # ltd function for lsd with depth
   ltd() {
+    if [ -z "$1" ]; then
+      echo "Usage: ltd <depth> [directory]"
+      return 1
+    fi
     lsd --tree --depth "$@"
   }
 else
