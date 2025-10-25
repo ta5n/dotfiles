@@ -1,0 +1,17 @@
+# Chezmoi gitignore
+
+# Ignore local configuration
+*.local
+
+# Ignore chezmoi state
+.chezmoi*
+
+# Ignore editor files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Ignore backup files
+*.bak
+*.backup

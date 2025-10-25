@@ -1,0 +1,299 @@
+" ~/.vimrc - Modern Vim Configuration
+" Best practices for Vim 8+ and Neovim compatibility
+
+" Ensure we're not in Vi-compatible mode
+set nocompatible
+
+" ============================================================================
+" Plugin Management - vim-plug
+" ============================================================================
+" Auto-install vim-plug if not found
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin(has('nvim') ? stdpath('data') . '/plugged' : '~/.vim/plugged')
+
+" Colorscheme
+Plug 'morhetz/gruvbox'
+Plug 'joshdick/onedark.vim'
+Plug 'sainnhe/everforest'
+
+" Status line
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" File explorer
+Plug 'preservim/nerdtree'
+Plug 'ryanoasis/vim-devicons'
+
+" Fuzzy finder
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" Git integration
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+" Syntax and language support
+Plug 'sheerun/vim-polyglot'
+Plug 'dense-analysis/ale'
+
+" Auto-completion (if Vim 8+ or Neovim)
+if has('nvim') || has('patch-8.0.0039')
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+endif
+
+" Code editing helpers
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-repeat'
+Plug 'jiangmiao/auto-pairs'
+Plug 'preservim/nerdcommenter'
+
+" Indentation guides
+Plug 'Yggdroot/indentLine'
+
+" Multi-cursor
+Plug 'mg979/vim-visual-multi'
+
+" Better search
+Plug 'haya14busa/incsearch.vim'
+
+" Session management
+Plug 'tpope/vim-obsession'
+
+call plug#end()
+
+" ============================================================================
+" General Settings
+" ============================================================================
+syntax on
+filetype plugin indent on
+
+" Leader key
+let mapleader = ","
+let maplocalleader = "\\"
+
+" Encoding
+set encoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8,cp1251,koi8-r,cp866
+
+" Display
+set number                    " Show line numbers
+set relativenumber            " Relative line numbers
+set showcmd                   " Show command in bottom bar
+set cursorline                " Highlight current line
+set wildmenu                  " Visual autocomplete for command menu
+set showmatch                 " Highlight matching brackets
+set laststatus=2              " Always show status line
+set cmdheight=2               " Better display for messages
+set signcolumn=yes            " Always show sign column
+
+" Search
+set incsearch                 " Search as characters are entered
+set hlsearch                  " Highlight matches
+set ignorecase                " Case insensitive search
+set smartcase                 " Case sensitive if uppercase used
+
+" Indentation
+set tabstop=4                 " Number of visual spaces per TAB
+set softtabstop=4             " Number of spaces in tab when editing
+set shiftwidth=4              " Number of spaces to use for autoindent
+set expandtab                 " Tabs are spaces
+set smartindent               " Smart autoindenting
+set autoindent                " Auto-indent new lines
+
+" Wrapping
+set nowrap                    " Don't wrap lines
+set linebreak                 " Break lines at word boundaries
+set textwidth=0               " Disable automatic line breaking
+set wrapmargin=0
+
+" Performance
+set lazyredraw                " Don't redraw during macros
+set ttyfast                   " Faster scrolling
+set updatetime=300            " Faster completion
+
+" Backup and swap
+set nobackup                  " No backup files
+set nowritebackup
+set noswapfile                " No swap files
+set undofile                  " Persistent undo
+set undodir=~/.vim/undo       " Undo directory
+
+" Splits
+set splitbelow                " Horizontal splits below
+set splitright                " Vertical splits to the right
+
+" Mouse support
+set mouse=a                   " Enable mouse in all modes
+
+" Clipboard
+if has('clipboard')
+  set clipboard=unnamed,unnamedplus
+endif
+
+" Bells
+set noerrorbells              " No error bells
+set visualbell                " Visual bell instead of beeping
+
+" Completion
+set completeopt=menuone,noinsert,noselect
+set shortmess+=c
+
+" Hidden buffers
+set hidden
+
+" Better command-line completion
+set wildmode=longest:full,full
+
+" ============================================================================
+" Color Scheme
+" ============================================================================
+set termguicolors
+set background=dark
+try
+  colorscheme gruvbox
+catch
+  colorscheme desert
+endtry
+
+" ============================================================================
+" Key Mappings
+" ============================================================================
+" Clear search highlighting
+nnoremap <silent> <leader><space> :nohlsearch<CR>
+
+" Save file
+nnoremap <leader>w :w<CR>
+nnoremap <leader>W :wq<CR>
+
+" Quit
+nnoremap <leader>q :q<CR>
+nnoremap <leader>Q :qa!<CR>
+
+" Better window navigation
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Resize windows
+nnoremap <M-j> :resize -2<CR>
+nnoremap <M-k> :resize +2<CR>
+nnoremap <M-h> :vertical resize -2<CR>
+nnoremap <M-l> :vertical resize +2<CR>
+
+" Buffer navigation
+nnoremap <leader>bn :bnext<CR>
+nnoremap <leader>bp :bprevious<CR>
+nnoremap <leader>bd :bdelete<CR>
+nnoremap <leader>bl :buffers<CR>
+
+" Tab navigation
+nnoremap <leader>tn :tabnew<CR>
+nnoremap <leader>tc :tabclose<CR>
+nnoremap <leader>tm :tabmove<CR>
+
+" Move lines up and down
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+" Better indenting
+vnoremap < <gv
+vnoremap > >gv
+
+" NERDTree
+nnoremap <leader>n :NERDTreeToggle<CR>
+nnoremap <leader>nf :NERDTreeFind<CR>
+
+" FZF
+nnoremap <leader>ff :Files<CR>
+nnoremap <leader>fg :Rg<CR>
+nnoremap <leader>fb :Buffers<CR>
+nnoremap <leader>fh :History<CR>
+
+" Git
+nnoremap <leader>gs :Git status<CR>
+nnoremap <leader>gc :Git commit<CR>
+nnoremap <leader>gp :Git push<CR>
+nnoremap <leader>gl :Git log<CR>
+nnoremap <leader>gd :Git diff<CR>
+
+" ============================================================================
+" Plugin Configurations
+" ============================================================================
+" Airline
+let g:airline_theme='gruvbox'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#branch#enabled = 1
+
+" NERDTree
+let g:NERDTreeShowHidden = 1
+let g:NERDTreeMinimalUI = 1
+let g:NERDTreeIgnore = ['^\.DS_Store$', '^\.git$', '\.pyc$', '__pycache__']
+let g:NERDTreeQuitOnOpen = 0
+
+" Auto close NERDTree if it's the only window left
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" GitGutter
+let g:gitgutter_enabled = 1
+let g:gitgutter_map_keys = 0
+let g:gitgutter_sign_added = '+'
+let g:gitgutter_sign_modified = '~'
+let g:gitgutter_sign_removed = '-'
+
+" ALE
+let g:ale_linters = {
+\   'python': ['pylint', 'flake8'],
+\   'javascript': ['eslint'],
+\   'go': ['golint', 'go vet'],
+\   'rust': ['cargo'],
+\}
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'python': ['black', 'isort'],
+\   'javascript': ['prettier', 'eslint'],
+\   'go': ['gofmt'],
+\   'rust': ['rustfmt'],
+\}
+let g:ale_fix_on_save = 1
+
+" IndentLine
+let g:indentLine_enabled = 1
+let g:indentLine_char = '│'
+
+" ============================================================================
+" Auto Commands
+" ============================================================================
+" Remember cursor position
+autocmd BufReadPost *
+  \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+  \ |   exe "normal! g`\""
+  \ | endif
+
+" Highlight on yank
+augroup highlight_yank
+    autocmd!
+    autocmd TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=300}
+augroup END
+
+" Remove trailing whitespace on save
+autocmd BufWritePre * :%s/\s\+$//e
+
+" File type specific settings
+autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab
+autocmd FileType javascript,typescript,json,html,css,yaml,yml setlocal tabstop=2 shiftwidth=2 expandtab
+autocmd FileType go setlocal tabstop=4 shiftwidth=4 noexpandtab
+autocmd FileType markdown setlocal wrap linebreak
+
+" Create undo directory if it doesn't exist
+if !isdirectory($HOME . "/.vim/undo")
+    call mkdir($HOME . "/.vim/undo", "p", 0700)
+endif

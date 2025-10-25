@@ -1,0 +1,135 @@
+[user]
+    name = {{ .name | default "Your Name" }}
+    email = {{ .email | default "your.email@example.com" }}
+
+[core]
+    editor = {{ if lookPath "nvim" }}nvim{{ else if lookPath "vim" }}vim{{ else }}vi{{ end }}
+    autocrlf = input
+    safecrlf = false
+    excludesfile = ~/.gitignore_global
+    pager = less -FRX
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = false
+
+[push]
+    default = simple
+    followTags = true
+
+[fetch]
+    prune = true
+
+[diff]
+    tool = vimdiff
+    colorMoved = zebra
+
+[merge]
+    tool = vimdiff
+    conflictstyle = diff3
+
+[color]
+    ui = auto
+    branch = auto
+    diff = auto
+    status = auto
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+[alias]
+    # Status
+    st = status
+    s = status -sb
+
+    # Commit
+    ci = commit
+    cm = commit -m
+    ca = commit --amend
+    can = commit --amend --no-edit
+
+    # Checkout
+    co = checkout
+    cob = checkout -b
+
+    # Branch
+    br = branch
+    bra = branch -a
+    brd = branch -d
+    brD = branch -D
+
+    # Add
+    a = add
+    aa = add --all
+    ap = add --patch
+
+    # Diff
+    d = diff
+    ds = diff --staged
+    dc = diff --cached
+
+    # Log
+    l = log --oneline --decorate --graph
+    la = log --oneline --decorate --graph --all
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    lga = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
+
+    # Pull/Push
+    pl = pull
+    ps = push
+    psu = push -u origin HEAD
+    psf = push --force-with-lease
+
+    # Remote
+    r = remote
+    rv = remote -v
+
+    # Reset
+    unstage = reset HEAD --
+    undo = reset --soft HEAD^
+    cleanup = !git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d
+
+    # Stash
+    ss = stash save
+    sp = stash pop
+    sl = stash list
+
+    # Misc
+    aliases = config --get-regexp alias
+    contrib = shortlog --summary --numbered
+    ignore = update-index --assume-unchanged
+    unignore = update-index --no-assume-unchanged
+    ignored = !git ls-files -v | grep "^[[:lower:]]"
+
+[help]
+    autocorrect = 1
+
+[credential]
+    helper = cache --timeout=3600
+
+{{- if eq .chezmoi.os "darwin" }}
+[credential]
+    helper = osxkeychain
+{{- end }}
+
+{{- if eq .chezmoi.os "linux" }}
+{{- if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+[credential]
+    helper = /mnt/c/Program\\ Files/Git/mingw64/libexec/git-core/git-credential-manager-core.exe
+{{- end }}
+{{- end }}
