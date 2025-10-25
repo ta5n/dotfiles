@@ -35,11 +35,14 @@ En hızlı yöntem - chezmoi'yi kurar ve dotfiles'ları uygular:
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply ta5n
 ```
 
+**Not:** İlk kurulumda git config'iniz yoksa varsayılan değerler kullanılır. Daha sonra `git config --global user.name "Your Name"` ve `git config --global user.email "your@email.com"` ile güncelleyebilirsiniz.
+
 **Ne yapar?**
 - chezmoi'yi indirir ve kurar
 - GitHub'dan ta5n/dotfiles repository'sini çeker
 - Tüm dotfiles'ları otomatik uygular
 - Kurulum scriptlerini çalıştırır (oh-my-zsh, powerlevel10k, eklentiler)
+- Mevcut git config'inizden kullanıcı bilgilerini alır
 
 ---
 

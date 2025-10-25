@@ -1,6 +1,21 @@
+{{- $name := "Your Name" -}}
+{{- $email := "your.email@example.com" -}}
+
+{{- /* Try to get from existing git config */ -}}
+{{- $gitName := output "git" "config" "--global" "user.name" | trim -}}
+{{- $gitEmail := output "git" "config" "--global" "user.email" | trim -}}
+
+{{- if $gitName -}}
+{{-   $name = $gitName -}}
+{{- end -}}
+
+{{- if $gitEmail -}}
+{{-   $email = $gitEmail -}}
+{{- end -}}
+
 [user]
-    name = {{ .name | default "Your Name" }}
-    email = {{ .email | default "your.email@example.com" }}
+    name = {{ $name }}
+    email = {{ $email }}
 
 [core]
     editor = {{ if lookPath "nvim" }}nvim{{ else if lookPath "vim" }}vim{{ else }}vi{{ end }}
