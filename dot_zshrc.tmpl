@@ -157,14 +157,15 @@ else
 
   # Tree functions as fallback for lt commands
   if command -v tree &> /dev/null; then
-    alias lt='tree -C'
-    alias lta='tree -Ca'
+    alias lt='tree -A -C'
+    alias lta='tree -A -C -a'
 
     ltd() {
       if [ -z "$1" ]; then
         echo "Usage: ltd <depth> [directory]"
+        return 1
       else
-        tree -C -L "$@"
+        tree -A -C -L "$@"
       fi
     }
   fi
