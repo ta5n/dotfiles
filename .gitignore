@@ -3,8 +3,11 @@
 # Ignore local configuration
 *.local
 
-# Ignore chezmoi state
+# Ignore chezmoi state (but not scripts)
 .chezmoi*
+!.chezmoiscripts/
+!.chezmoiignore
+!.chezmoi.toml.tmpl
 
 # Ignore editor files
 *.swp

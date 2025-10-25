@@ -100,10 +100,25 @@ else
 fi
 
 # Aliases
-alias ls='ls --color=auto'
-alias ll='ls -lah'
-alias la='ls -A'
-alias l='ls -CF'
+# lsd (LSDeluxe) aliases - modern ls replacement
+if command -v lsd &> /dev/null; then
+  alias ls='lsd'
+  alias l='lsd -l'
+  alias ll='lsd -lA'
+  alias la='lsd -A'
+  alias lla='lsd -lA'
+  alias lt='lsd --tree'
+  alias lta='lsd --tree -A'
+  alias ltd='lsd --tree --depth'
+else
+  # Fallback to standard ls
+  alias ls='ls --color=auto'
+  alias ll='ls -lah'
+  alias la='ls -A'
+  alias l='ls -CF'
+fi
+
+# Grep aliases
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'

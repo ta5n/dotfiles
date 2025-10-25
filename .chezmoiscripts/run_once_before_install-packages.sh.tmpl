@@ -1,0 +1,104 @@
+#!/bin/bash
+# Install script for dotfiles dependencies
+# This runs once before applying dotfiles
+
+set -e
+
+echo "Installing dotfiles dependencies..."
+
+# Detect OS
+{{- if eq .chezmoi.os "darwin" }}
+# macOS
+echo "Detected macOS"
+
+# Install Homebrew if not installed
+if ! command -v brew &> /dev/null; then
+    echo "Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+# Update Homebrew
+brew update
+
+# Install packages
+echo "Installing packages via Homebrew..."
+brew install zsh git vim neovim curl wget fzf ripgrep fd bat exa tmux lsd
+
+# Install fonts
+brew tap homebrew/cask-fonts
+brew install --cask font-meslo-lg-nerd-font
+
+{{- else if eq .chezmoi.os "linux" }}
+# Linux
+echo "Detected Linux"
+
+{{- if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+echo "Running on WSL"
+{{- end }}
+
+# Detect package manager
+if command -v apt &> /dev/null; then
+    # Debian/Ubuntu
+    echo "Using apt package manager..."
+    sudo apt update
+    sudo apt install -y zsh git vim curl wget build-essential
+
+    # Install neovim from PPA for latest version
+    if ! command -v nvim &> /dev/null; then
+        sudo add-apt-repository -y ppa:neovim-ppa/stable || true
+        sudo apt update
+        sudo apt install -y neovim
+    fi
+
+    # Install other tools
+    sudo apt install -y fzf ripgrep fd-find bat tmux lsd
+
+elif command -v dnf &> /dev/null; then
+    # Fedora/RHEL
+    echo "Using dnf package manager..."
+    sudo dnf update -y
+    sudo dnf install -y zsh git vim neovim curl wget gcc make
+    sudo dnf install -y fzf ripgrep fd-find bat tmux lsd
+
+elif command -v pacman &> /dev/null; then
+    # Arch Linux
+    echo "Using pacman package manager..."
+    sudo pacman -Syu --noconfirm
+    sudo pacman -S --noconfirm zsh git vim neovim curl wget base-devel
+    sudo pacman -S --noconfirm fzf ripgrep fd bat tmux lsd
+fi
+
+{{- end }}
+
+# Install oh-my-zsh
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo "Installing oh-my-zsh..."
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+fi
+
+# Install powerlevel10k theme
+if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
+    echo "Installing powerlevel10k theme..."
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+fi
+
+# Install zsh-syntax-highlighting
+if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
+    echo "Installing zsh-syntax-highlighting..."
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+fi
+
+# Install zsh-autosuggestions
+if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
+    echo "Installing zsh-autosuggestions..."
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+fi
+
+# Change default shell to zsh
+if [ "$SHELL" != "$(which zsh)" ]; then
+    echo "Changing default shell to zsh..."
+    chsh -s "$(which zsh)" || echo "Please manually change your default shell to zsh with: chsh -s \$(which zsh)"
+fi
+
+echo "Dependencies installation complete!"
+echo "Please log out and log back in for shell changes to take effect."

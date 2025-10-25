@@ -1,0 +1,30 @@
+# .chezmoiignore - Platform-specific file exclusions
+
+{{- if ne .chezmoi.os "darwin" }}
+# Ignore macOS specific files on non-macOS systems
+.macos
+{{- end }}
+
+{{- if ne .chezmoi.os "linux" }}
+# Ignore Linux specific files on non-Linux systems
+.linux
+{{- end }}
+
+{{- if not (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+# Ignore WSL specific files when not on WSL
+.wsl
+{{- end }}
+
+# Git Bash for Windows specific
+{{- if not (or (eq .chezmoi.os "windows") (contains "MINGW" .chezmoi.kernel.osrelease) (contains "MSYS" .chezmoi.kernel.osrelease)) }}
+.gitbash
+{{- end }}
+
+# Ignore README files (only for repository documentation)
+README.md
+LICENSE
+
+# Ignore git files
+.git/
+.gitignore
+.gitattributes
