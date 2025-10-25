@@ -147,6 +147,19 @@ else
   alias ll='ls -lah'
   alias la='ls -A'
   alias l='ls -CF'
+
+  # Tree aliases as fallback for lt commands
+  if command -v tree &> /dev/null; then
+    alias lt='tree -C'
+    alias lta='tree -Ca'
+    ltd() {
+      if [ -z "$1" ]; then
+        echo "Usage: ltd <depth> [directory]"
+      else
+        tree -C -L "$@"
+      fi
+    }
+  fi
 fi
 
 # Grep aliases
@@ -183,11 +196,26 @@ alias dps='docker ps'
 alias dpsa='docker ps -a'
 alias di='docker images'
 
-# Kubectl aliases
-alias k='kubectl'
-alias kgp='kubectl get pods'
-alias kgs='kubectl get services'
-alias kgd='kubectl get deployments'
+# Kubectl aliases with kubecolor support
+if command -v kubectl &> /dev/null; then
+  if command -v kubecolor &> /dev/null; then
+    alias kubectl='kubecolor'
+  fi
+  alias k='kubectl'
+  alias kgp='kubectl get pods'
+  alias kgs='kubectl get services'
+  alias kgd='kubectl get deployments'
+  alias kgn='kubectl get nodes'
+  alias kga='kubectl get all'
+  alias kdp='kubectl describe pod'
+  alias kds='kubectl describe service'
+  alias kdd='kubectl describe deployment'
+  alias kl='kubectl logs'
+  alias klf='kubectl logs -f'
+  alias kex='kubectl exec -it'
+  alias kctx='kubectl config current-context'
+  alias kns='kubectl config set-context --current --namespace'
+fi
 
 # Safety aliases
 alias rm='rm -i'

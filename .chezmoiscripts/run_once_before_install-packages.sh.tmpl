@@ -22,7 +22,7 @@ brew update
 
 # Install packages
 echo "Installing packages via Homebrew..."
-brew install zsh git vim neovim curl wget fzf ripgrep fd bat exa tmux lsd grc
+brew install zsh git vim neovim curl wget fzf ripgrep fd bat exa tmux lsd grc tree
 
 # Install fonts
 brew tap homebrew/cask-fonts
@@ -51,21 +51,21 @@ if command -v apt &> /dev/null; then
     fi
 
     # Install other tools
-    sudo apt install -y fzf ripgrep fd-find bat tmux lsd grc
+    sudo apt install -y fzf ripgrep fd-find bat tmux lsd grc tree
 
 elif command -v dnf &> /dev/null; then
     # Fedora/RHEL
     echo "Using dnf package manager..."
     sudo dnf update -y
     sudo dnf install -y zsh git vim neovim curl wget gcc make
-    sudo dnf install -y fzf ripgrep fd-find bat tmux lsd grc
+    sudo dnf install -y fzf ripgrep fd-find bat tmux lsd grc tree
 
 elif command -v pacman &> /dev/null; then
     # Arch Linux
     echo "Using pacman package manager..."
     sudo pacman -Syu --noconfirm
     sudo pacman -S --noconfirm zsh git vim neovim curl wget base-devel
-    sudo pacman -S --noconfirm fzf ripgrep fd bat tmux lsd grc
+    sudo pacman -S --noconfirm fzf ripgrep fd bat tmux lsd grc tree
 fi
 
 {{- end }}
@@ -92,6 +92,33 @@ fi
 if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
     echo "Installing zsh-autosuggestions..."
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+fi
+
+# Install kubecolor (if kubectl is available)
+if command -v kubectl &> /dev/null && ! command -v kubecolor &> /dev/null; then
+    echo "Installing kubecolor..."
+
+{{- if eq .chezmoi.os "darwin" }}
+    # macOS
+    brew install kubecolor
+{{- else if eq .chezmoi.os "linux" }}
+    # Linux - install from GitHub releases
+    KUBECOLOR_VERSION=$(curl -s https://api.github.com/repos/kubecolor/kubecolor/releases/latest | grep '"tag_name"' | sed -E 's/.*"v([^"]+)".*/\1/')
+    ARCH=$(uname -m)
+
+    case "$ARCH" in
+        x86_64)  ARCH="amd64" ;;
+        aarch64) ARCH="arm64" ;;
+        armv7l)  ARCH="arm" ;;
+    esac
+
+    curl -sL "https://github.com/kubecolor/kubecolor/releases/download/v${KUBECOLOR_VERSION}/kubecolor_${KUBECOLOR_VERSION}_linux_${ARCH}.tar.gz" | tar xz -C /tmp
+    mkdir -p "$HOME/.local/bin"
+    mv /tmp/kubecolor "$HOME/.local/bin/"
+    chmod +x "$HOME/.local/bin/kubecolor"
+    rm -f /tmp/LICENSE /tmp/README.md
+    echo "kubecolor installed to ~/.local/bin/kubecolor"
+{{- end }}
 fi
 
 # Change default shell to zsh
