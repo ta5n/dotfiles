@@ -185,8 +185,10 @@ alias update-dotfiles='chezmoi update'
 if command -v kubectl &> /dev/null; then
   if command -v kubecolor &> /dev/null; then
     alias kubectl='kubecolor'
-    # Make completion work with kubecolor
-    compdef kubecolor=kubectl
+    # Make completion work with kubecolor (only if compdef exists)
+    if command -v compdef &> /dev/null; then
+      compdef kubecolor=kubectl
+    fi
   fi
   alias k='kubectl'
   alias kgp='kubectl get pods'
