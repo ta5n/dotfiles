@@ -22,7 +22,7 @@ brew update
 
 # Install packages
 echo "Installing packages via Homebrew..."
-brew install zsh git vim neovim curl wget fzf ripgrep fd bat exa tmux lsd
+brew install zsh git vim neovim curl wget fzf ripgrep fd bat exa tmux lsd grc
 
 # Install fonts
 brew tap homebrew/cask-fonts
@@ -51,21 +51,21 @@ if command -v apt &> /dev/null; then
     fi
 
     # Install other tools
-    sudo apt install -y fzf ripgrep fd-find bat tmux lsd
+    sudo apt install -y fzf ripgrep fd-find bat tmux lsd grc
 
 elif command -v dnf &> /dev/null; then
     # Fedora/RHEL
     echo "Using dnf package manager..."
     sudo dnf update -y
     sudo dnf install -y zsh git vim neovim curl wget gcc make
-    sudo dnf install -y fzf ripgrep fd-find bat tmux lsd
+    sudo dnf install -y fzf ripgrep fd-find bat tmux lsd grc
 
 elif command -v pacman &> /dev/null; then
     # Arch Linux
     echo "Using pacman package manager..."
     sudo pacman -Syu --noconfirm
     sudo pacman -S --noconfirm zsh git vim neovim curl wget base-devel
-    sudo pacman -S --noconfirm fzf ripgrep fd bat tmux lsd
+    sudo pacman -S --noconfirm fzf ripgrep fd bat tmux lsd grc
 fi
 
 {{- end }}

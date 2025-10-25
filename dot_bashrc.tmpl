@@ -99,6 +99,37 @@ else
   PS1="${GREEN}\u${RESET}@${CYAN}\h${RESET}:${BLUE}\w${RESET} ${YELLOW}\$(parse_git_branch)${RESET}\n$ "
 fi
 
+# GRC (Generic Colouriser) - colorize output of various commands
+if command -v grc &> /dev/null; then
+  # Source grc bash configuration if available
+  [[ -s "/etc/grc.bashrc" ]] && source /etc/grc.bashrc
+  [[ -s "/usr/local/etc/grc.bashrc" ]] && source /usr/local/etc/grc.bashrc
+  [[ -s "$HOME/.grc/grc.bashrc" ]] && source $HOME/.grc/grc.bashrc
+
+  # Manual aliases if grc.bashrc not found
+  if ! type -t grc &> /dev/null; then
+    alias colourify='grc -es --colour=auto'
+    alias configure='colourify ./configure'
+    alias diff='colourify diff'
+    alias make='colourify make'
+    alias gcc='colourify gcc'
+    alias g++='colourify g++'
+    alias as='colourify as'
+    alias gas='colourify gas'
+    alias ld='colourify ld'
+    alias netstat='colourify netstat'
+    alias ping='colourify ping'
+    alias traceroute='colourify traceroute'
+    alias head='colourify head'
+    alias tail='colourify tail'
+    alias dig='colourify dig'
+    alias mount='colourify mount'
+    alias ps='colourify ps'
+    alias mtr='colourify mtr'
+    alias df='colourify df'
+  fi
+fi
+
 # Aliases
 # lsd (LSDeluxe) aliases - modern ls replacement
 if command -v lsd &> /dev/null; then
