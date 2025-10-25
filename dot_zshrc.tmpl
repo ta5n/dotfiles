@@ -139,7 +139,11 @@ if command -v lsd &> /dev/null; then
   alias lla='lsd -lA'
   alias lt='lsd --tree'
   alias lta='lsd --tree -A'
-  alias ltd='lsd --tree --depth'
+
+  # ltd function for lsd with depth
+  ltd() {
+    lsd --tree --depth "$@"
+  }
 else
   # Fallback to standard ls
   alias ls='ls --color=auto'
@@ -147,10 +151,11 @@ else
   alias la='ls -A'
   alias l='ls -CF'
 
-  # Tree aliases as fallback for lt commands
+  # Tree functions as fallback for lt commands
   if command -v tree &> /dev/null; then
     alias lt='tree -C'
     alias lta='tree -Ca'
+
     ltd() {
       if [ -z "$1" ]; then
         echo "Usage: ltd <depth> [directory]"
